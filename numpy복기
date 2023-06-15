@@ -1,0 +1,106 @@
+
+
+#1. numpy 실습
+#c+s+p conda python으로 바꾸기
+
+
+import numpy as np
+
+data = [[1,2,3],[4,5,6],[7,8,9]]
+
+a= np.array(data)
+print (a)
+
+a.dtype #<- 더 자세함
+type(a)
+
+a = a.astype(np.float32) #a = a.astype('float32')  #문자형 바꾸기
+print(a)
+
+print(a[0][1])
+print(a[0])
+
+
+np.arange(1,10,2)
+np.arange(1,10) .reshape(3,3)
+np.arange(1,13).reshape(3,2,2)
+
+np.nan #결측값 입력 가능
+a[0][1] = np.nan #float형만 사용 가능
+print(a)
+
+b = np.linspace(1,10,20)  #(초기값, 종료값, 개수)
+print(b)
+
+
+#----------------------------------------
+#연산
+
+data = np.arange(1,10).reshape(3,3)
+print(data)
+data+data  #행렬내 각 원소들끼리의 연산 가능
+
+np.dot(data,data) #행렬의 곱
+
+
+#---------------------------------------------
+#차원
+
+#0차원 = 스칼라
+a = np.array(1)
+a.shape #1차원이라 값 없음.
+
+#1차원 = 벡터 
+a = np.array([1])
+a.shape 
+a.ndim
+
+#2차원 = 매트릭스 (행렬)
+b=np.array([[1,2,3],[4,5,6]])
+b.shape
+b.ndim
+print(b)
+
+#3차원 이상의 행렬 = Tenjsor
+c = np.array([[[1,2],[3,4],[5,6]],[[7,8],[9,10],[11,12]]]) #[]괄호가 3개
+c.shape
+print(c)
+
+
+#----------------------------------
+#행렬의 유형
+a= np.arange(12).reshape(2,3,2)
+print(a)
+
+b= np.ones(12)
+print(b)
+
+c= np.zeros(12).reshape(2,3,2)
+c= np.zeros([2,3,2]) #reshape과 같은 효과
+print(c)
+
+d= np.eye(3)  #단위행렬(3x3)
+print(d)
+
+
+f= np.empty([2,3]) #empty = 0에 가까운 값으로 행렬 생성
+print(f)
+
+
+h= np.full((3,4,),1000)
+print(h)
+
+
+#-----------------------------
+#집계함수
+
+a = np.arange(10).reshape(2,5)
+print(a)
+
+a[0][0] = 100
+np.mean(a)      #평균
+np.median(a)    #중앙값
+np.std(a)       #표준편차
+np.var(a)       #분산
+np.max(a, axis=0)
+np.max(a, axis=1)
