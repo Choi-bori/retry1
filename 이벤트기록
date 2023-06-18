@@ -1,0 +1,50 @@
+import pandas as pd
+
+#경기정보 불러오기
+dataset_name = 'World_Cup'
+match_df = pd.read_csv(f'data/refined_events/{dataset_name}/matches.csv', index_col=0, encoding='utf-8-sig')
+match_df
+
+#경기정보 필터링
+match_df[(match_df['team1_name'] == 'Korea Republic') | (match_df['team2_name'] == 'Korea Republic')]
+
+#경기 이벤트데이터 불러오기
+match_id = 2057988
+match_events = pd.read_pickle(f'data/refined_events/{dataset_name}/{match_id}.pkl')
+match_events
+
+#열인덱싱
+match_events['player_name']
+
+#행인덱싱
+match_events.loc[0]
+
+
+# 필터링 / 불린인덱싱
+match_events[match_events['event_type'] == 'Shot'].head()
+match_events[match_events['player_name'] == 'Son Heung-Min'].head()
+
+#중복제거       by unique -> Series 중복 제거
+match_events['period'].unique()
+match_events['team_name'].unique()
+match_events['player_name'].unique()
+
+#행 중복제거    by drop_duplicates  -> dataFrame 행 중복제거
+match_events[['team_id', 'team_name', 'player_id', 'player_name']].drop_duplicates()#.sort_values('team_id')
+match_events[['event_type', 'sub_event_type']].drop_duplicates()#.sort_values(['event_type', 'sub_event_type'])
+
+
+#List 원소를 집합으로 변환하여 중복제거
+
+match_events['tags'].sum()
+set(match_events['tags'].sum())
+
+#선수교체 이벤트
+match_events[match_events['event_type'] == 'Substitution'].head()
+
+
+#미션)
+#경기 이벤트 데이터에서 슈팅 이벤트만 필터링한 후, 슈팅 이벤트에는 어떤 정류의 태그들이 달려있는지 중복제거를 통해 확인해보세요
+set(match_events[match_events['event_type']=='Shot']['tags'].sum())
+
+
