@@ -224,3 +224,84 @@ group_dict = {'Korea Republic': 'red', 'Germany': 'blue'}
 plot_events(match_events, 'team_name', group_dict, event_type='Shot', rotate_team2_events=True)
 
 
+
+
+#주요 선수 패스 위치 시각화
+match_events['player_name'].unique()            #unique로 명단 확인
+
+group_dict = {
+    'Son Heung-Min': 'red', 'Jae-Sung Lee': 'hotpink',
+    'M. Hummels': 'blue', 'T. Kroos': 'black'
+}
+plot_events(match_events, col_name='player_name', group_dict=group_dict, event_type='Pass')
+plt.show()
+
+
+
+
+#----------------------------------------------------------
+#이벤트 히트맵 시각화               대회 전체 데이터 이용.
+
+#데이터 불러오기
+dataset_name = 'World_Cup'
+match_df = pd.read_csv(f'data/refined_events/{dataset_name}/matches.csv', index_col=0, encoding='utf-8-sig')
+match_df
+
+
+#대회 전체 이벤트 data frame생성
+match_events_list = []
+
+for match_id in match_df.index:
+    match_events = pd.read_pickle(f'data/refined_events/World_Cup/{match_id}.pkl')
+    match_events_list.append(match_events)
+
+events = pd.concat(match_events_list, ignore_index=True)
+events
+
+
+#특정 선수 히트맵 산출
+player_events = events[events['player_name'] == 'Son Heung-Min']
+x = player_events['start_x']
+y = player_events['start_y']
+heatmap, xedges, yedges = np.histogram2d(y, x, bins=(3, 6), range=[[0, 68], [0, 104]])
+heatmap, xedges, yedges
+
+
+plt.figure(figsize=(10, 6))
+plt.imshow(heatmap)
+plt.show()
+
+
+#경기장 위 오버레이
+fig, ax = draw_pitch('white', 'black')
+
+img = ax.imshow(heatmap[::-1],                          #y축 뒤집기
+                 extent=[0, 104, 0, 68],                #경기장과 히트맵 사이즈 맞추기
+                 vmin=0, cmap='Reds', alpha=0.8)  
+
+cbar = fig.colorbar(img, ax=ax)
+cbar.ax.tick_params(labelsize=15)
+cbar.set_label(label='Number of events', size=20)
+plt.show()
+# plt.savefig('img/player_event_heatmap.png', bbox_inches='tight')      #이미지 저장 코드
+
+
+
+
+
+#대회 전체의 모든 슈팅 히트맵 시각화
+
+shot_records = events[events['event_type'] == 'Shot']
+x = shot_records['start_x']
+y = shot_records['start_y']
+heatmap, xedges, yedges = np.histogram2d(y, x, bins=(34, 52), range=[[0, 68], [0, 104]])
+
+fig, ax = draw_pitch('white', 'black')
+img = ax.imshow(heatmap[::-1], extent=[0, 104, 0, 68], vmin=0, vmax=15, cmap='jet', alpha=0.8)
+
+cbar = fig.colorbar(img, ax=ax)
+cbar.ax.tick_params(labelsize=15)
+cbar.set_label(label='Number of shots', size=20)
+
+plt.savefig('img/shot_heatmap.png', bbox_inches='tight')
+plt.show()
