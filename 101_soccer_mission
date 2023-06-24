@@ -1,0 +1,46 @@
+
+# 1-3 선수 이벤트 히트맵
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+from src.plot_utils import *
+
+#데이터 불러오기
+select_refinded_events = 'World_Cup'
+match_df = pd.read_csv(f'data/refined_events/refinded_events/{select_refinded_events}/matches.csv',
+                       index_col=0, encoding='utf-8-sig')
+
+#대회 전체 이벤트 data frame생성
+match_ev_list=[]
+
+for match_id in match_df.index:
+    match_events = pd.read_pickle(f'data/refined_events/World_Cup/{match_id}.pkl')
+    match_ev_list.append(match_events)
+
+
+events = pd.concat(match_ev_list, ignore_index=True)
+events
+
+events['player_name'].unique()
+player_name = 'Seon-Min Moon'
+player_events = events[events["player_name"] == player_name]
+
+x= player_events['start_x']
+y = player_events['start_y']
+heatmap, xedges, yedges = np.histogram2d(y, x, bins=(12, 24), range=[[0, 68], [0, 104]])
+
+plt.figure(figsize=(10, 6))
+plt.imshow(heatmap)
+#plt.show()
+
+fig, ax = draw_pitch('white', 'black')
+
+img = ax.imshow(heatmap[::-1], extent=[0,104,0,68], vmin=0, cmap='Greens', alpha=0.8)
+cbar = fig.colorbar(img, ax=ax)
+cbar.ax.tick_params(labelsize=15)
+cbar.set_label(label='Number of events', size=20)
+plt.show()
+# plt.savefig('img/player_event_heatmap.png', bbox_inches='tight')      #이미지 저장 코드
+
+
